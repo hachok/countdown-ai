@@ -1,7 +1,6 @@
 import { Card, Layout, Page } from "@shopify/polaris";
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import { Card } from '@shopify/polaris';
 
 const GET_PRODUCTS_BY_ID = gql`
   query getProducts($ids: [ID!]!) {
