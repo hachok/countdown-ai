@@ -3,7 +3,7 @@ import App from '../components/App/App';
 
 const Index = () => (
   <Page>
-    <Heading>Shopify app with Node and React 🎉</Heading>
+    <Heading>Shopify app with Node and React1 🎉</Heading>
     <App />
   </Page>
 );
