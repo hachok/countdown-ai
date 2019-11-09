@@ -1,0 +1,6 @@
+endpoint: https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage
+datamodel: datamodel.prisma
+
+generate:
+  - generator: javascript-client
+    output: ./generated/prisma-client/
