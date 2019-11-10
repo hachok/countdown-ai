@@ -21,7 +21,7 @@ const app = next({
 });
 const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SCOPES } = process.env;
-const typeDefs = importSchema('/gql/schema.graphql');
+const typeDefs = importSchema('gql/schema.graphql');
 
 const db = new Prisma({
   typeDefs: "./generated/prisma.graphql",
