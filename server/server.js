@@ -7,9 +7,9 @@ import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
-import { ApolloServer, gql } from "apollo-server-koa";
-import { Mutations } from "./gql/resolvers/mutation";
-import { Queries } from "./gql/resolvers/query";
+import { ApolloServer } from "apollo-server-koa";
+import { Mutations } from "./gql/resolvers/mutations";
+import { Queries } from "./gql/resolvers/queries";
 import { Prisma } from "prisma-binding";
 import {importSchema} from 'graphql-import';
 
@@ -21,7 +21,7 @@ const app = next({
 });
 const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SCOPES } = process.env;
-const typeDefs = importSchema('./gql/schema.graphql');
+const typeDefs = importSchema('schema.graphql');
 const db = new Prisma({
   typeDefs: '/prisma/generated/prisma.graphql',
   endpoint: "https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage",
