@@ -86,5 +86,8 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "resolutions": {
+    "**/@babel/runtime": "7.5.0"
   }
 }
