@@ -27,6 +27,7 @@
     "clearMocks": true
   },
   "dependencies": {
+    "@apollo/react-hooks": "^3.1.3",
     "@babel/core": "7.3.4",
     "@babel/helpers": "^7.7.0",
     "@babel/plugin-transform-spread": "^7.6.2",
@@ -48,6 +49,7 @@
     "graphql": "^14.5.8",
     "graphql-cli": "^3.0.14",
     "graphql-import": "^0.7.1",
+    "graphql-tag": "latest",
     "isomorphic-fetch": "^2.1.1",
     "js-cookie": "^2.2.0",
     "koa": "^2.7.0",
@@ -62,8 +64,7 @@
     "react": "^16.8.6",
     "react-apollo": "^2.5.6",
     "react-dom": "^16.8.6",
-    "styled-components": "^4.3.2",
-    "graphql-tag": "latest"
+    "styled-components": "^4.3.2"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.4.3",
