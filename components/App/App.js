@@ -3,8 +3,16 @@ import { Heading, CalloutCard } from "@shopify/polaris";
 import { Container } from "./App.styled";
 import { EmptyState, Layout } from "@shopify/polaris";
 import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
+import gql from "graphql-tag";
+import { useQuery } from '@apollo/react-hooks';
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
+
+const GET_USERS = gql`
+  {
+    users
+  }
+`;
 
 class App extends Component {
   state = { open: false };
@@ -14,7 +22,8 @@ class App extends Component {
   };
 
   componentDidMount() {
-
+    const { loading, error, data } = useQuery(GET_USERS);
+    console.log('data', data);
   }
 
   render() {
