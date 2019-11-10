@@ -1,8 +1,8 @@
 {
   "name": "Untitled GraphQL Schema",
-  "schemaPath": "./server/gql/schema.graphql",
+  "schemaPath": "/server/gql/schema.graphql",
   "extensions": {
-    "prisma": "./prisma/prisma.yml",
+    "prisma": "/prisma/prisma.yml",
     "endpoints": {
       "Default GraphQL Endpoint": {
         "url": "http://localhost:8080/graphql",
