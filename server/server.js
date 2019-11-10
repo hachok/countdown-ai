@@ -8,8 +8,8 @@ import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
 import { ApolloServer } from "apollo-server-koa";
-import { Mutations } from "./gql/resolvers/mutations";
-import { Queries } from "./gql/resolvers/queries";
+import { Mutation } from "./gql/Mutation";
+import { Query } from "./gql/Query";
 import { Prisma } from "prisma-binding";
 import {importSchema} from 'graphql-import';
 
@@ -31,8 +31,8 @@ const db = new Prisma({
 const graphQLServer = new ApolloServer({
   typeDefs,
   resolvers: {
-    Mutations,
-    Queries
+    Mutation,
+    Query
   },
   // Make graphql playgroud available at /graphql
   playground: {

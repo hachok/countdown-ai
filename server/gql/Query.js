@@ -1,4 +1,4 @@
-export const Queries = {
+export const Query = {
   user(parent, args, context, info) {
     if (!context.request.id) {
       return null;
