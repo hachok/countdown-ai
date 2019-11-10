@@ -38,7 +38,6 @@ const graphQLServer = new ApolloServer({
   playground: {
     endpoint: "/graphql"
   },
-  bodyParser: true,
   context: ({ req }) => ({
     ...req,
     db
