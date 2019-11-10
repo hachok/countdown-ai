@@ -25,7 +25,8 @@ const typeDefs = importSchema('/gql/schema.graphql');
 
 const db = new Prisma({
   typeDefs: "./generated/prisma.graphql",
-  endpoint: "https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage"
+  endpoint: "https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage",
+  debug: true,
 });
 
 const graphQLServer = new ApolloServer({
