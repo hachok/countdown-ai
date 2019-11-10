@@ -1,6 +1,6 @@
 {
   "name": "Untitled GraphQL Schema",
-  "schemaPath": "server/gql/schema.graphql",
+  "schemaPath": "server/schema.graphql",
   "extensions": {
     "prisma": "prisma/prisma.yml",
     "endpoints": {
