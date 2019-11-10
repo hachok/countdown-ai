@@ -6,5 +6,8 @@ export const Queries = {
     return context.db.query.user({
       where: { id: context.request.id }
     }, info);
+  },
+  users(parent, args, context, info) {
+    return context.db.query.users({}, info);
   }
 };
