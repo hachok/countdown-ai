@@ -23,7 +23,7 @@ const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SCOPES } = process.env;
 const typeDefs = importSchema('server/schema.graphql');
 const db = new Prisma({
-  typeDefs: 'prisma/generated/prisma.graphql',
+  typeDefs: __dirname + '/prisma/generated/prisma.graphql',
   endpoint: "https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage",
   debug: true,
 });
