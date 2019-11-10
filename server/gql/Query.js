@@ -7,7 +7,7 @@ export const Query = {
       where: { id: context.request.id }
     }, info);
   },
-  users(parent, args, context, info) {
-    return context.db.query.users({}, info);
+  users(parent, args, context) {
+    return context.db.query.users();
   }
 };
