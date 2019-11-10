@@ -8,6 +8,6 @@ export const Query = {
     }, info);
   },
   users(parent, args, context) {
-    return context.db.query.users;
+    return context.db.query.users();
   }
 };
