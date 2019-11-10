@@ -12,6 +12,11 @@ class App extends Component {
     this.setState({ open: false });
     console.log("resources", resources);
   };
+
+  componentDidMount() {
+
+  }
+
   render() {
     return (
       <Heading>
