@@ -7,6 +7,11 @@ import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
+import { ApolloServer, gql } from "apollo-server-koa";
+import { Mutations } from "./gql/resolvers/mutation";
+import { Queries } from "./gql/resolvers/query";
+import { Prisma } from "prisma-binding";
+import {importSchema} from 'graphql-import';
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -16,6 +21,30 @@ const app = next({
 });
 const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SCOPES } = process.env;
+const typeDefs = importSchema('/gql/schema.graphql');
+
+const db = new Prisma({
+  typeDefs: "./generated/prisma.graphql",
+  endpoint: "https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage"
+});
+
+const graphQLServer = new ApolloServer({
+  typeDefs,
+  resolvers: {
+    Mutations,
+    Queries
+  },
+  // Make graphql playgroud available at /graphql
+  playground: {
+    endpoint: "/graphql"
+  },
+  bodyParser: true,
+  context: ({ req }) => ({
+    ...req,
+    db
+  })
+});
+
 app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
@@ -36,6 +65,10 @@ app.prepare().then(() => {
       }
     })
   );
+
+  graphQLServer.applyMiddleware({
+    app: server
+  });
 
   server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
