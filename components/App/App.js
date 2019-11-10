@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Heading, CalloutCard } from "@shopify/polaris";
+import { Heading, CalloutCard, Card } from "@shopify/polaris";
 import { Container } from "./App.styled";
 import { EmptyState, Layout } from "@shopify/polaris";
 import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
-import { useQuery } from '@apollo/react-hooks';
+import { Query } from 'react-apollo';
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -22,13 +22,22 @@ class App extends Component {
   };
 
   componentDidMount() {
-    const { loading, error, data } = useQuery(GET_USERS);
-    console.log('data', data);
+    console.log('componentDidMount');
   }
 
   render() {
     return (
       <Heading>
+        <Query query={GET_USERS}>
+          {({ data}) => {
+            console.log('data', data);
+            return (
+              <Card>
+                <p>stuff here</p>
+              </Card>
+            );
+          }}
+        </Query>
         <Container>
           <CalloutCard
             title="Customize the style of your checkout"
