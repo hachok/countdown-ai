@@ -2,5 +2,5 @@ endpoint: https://countdown-43264fa942.herokuapp.com/countdown-service/countdown
 datamodel: datamodel.prisma
 
 generate:
-  - generator: javascript-client
-    output: ./generated/prisma-client/
+  - generator: graphql-schema
+    output: ./generated/prisma.graphql
