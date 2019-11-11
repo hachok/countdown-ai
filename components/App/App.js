@@ -37,7 +37,7 @@ class App extends Component {
 
   async componentDidMount() {
     const mut = await this.props.client.mutate({
-      query: CREATE_USER
+      mutation: CREATE_USER
     });
     console.log("componentDidMount mut", mut);
     const res = await this.props.client.query({
