@@ -36,13 +36,14 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    await this.props.client.mutation({
+    const mut = await this.props.client.mutation({
       query: CREATE_USER
     });
+    console.log("componentDidMount mut", mut);
     const res = await this.props.client.query({
       query: GET_USERS
     });
-    console.log("componentDidMount", res);
+    console.log("componentDidMount res", res);
   }
 
   render() {
