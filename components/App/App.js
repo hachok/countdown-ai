@@ -10,6 +10,11 @@ const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
 const GET_USERS = gql`
   {
+    shop {
+      id
+      name
+      email
+    }
     users {
       id
       name
@@ -20,7 +25,7 @@ const GET_USERS = gql`
 
 const CREATE_USER = gql`
   mutation createUser {
-    createUser(data:{name: "Alexey", surname: "Altuhov"}) {
+    createUser(data: { name: "Alexey", surname: "Altuhov" }) {
       id
       name
       surname
