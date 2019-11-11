@@ -18,6 +18,16 @@ const GET_USERS = gql`
   }
 `;
 
+const CREATE_USER = gql`
+  mutation createUser {
+    createUser(data: { name: "Alexey", surname: "Altuhov" }) {
+      id
+      name
+      surname
+    }
+  }
+`;
+
 class App extends Component {
   state = { open: false };
   handleSelection = resources => {
@@ -26,8 +36,11 @@ class App extends Component {
   };
 
   async componentDidMount() {
+    await this.props.client.mutation({
+      query: CREATE_USER
+    });
     const res = await this.props.client.query({
-      query: GET_USERS,
+      query: GET_USERS
     });
     console.log("componentDidMount", res);
   }
@@ -86,4 +99,4 @@ class App extends Component {
   }
 }
 
-export default withApollo(App);;
+export default withApollo(App);
