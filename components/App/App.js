@@ -4,7 +4,7 @@ import { Container } from "./App.styled";
 import { EmptyState, Layout } from "@shopify/polaris";
 import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
-import { Query } from "react-apollo";
+import { Query, withApollo } from "react-apollo";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -25,8 +25,11 @@ class App extends Component {
     console.log("resources", resources);
   };
 
-  componentDidMount() {
-    console.log("componentDidMount");
+  async componentDidMount() {
+    const res = await this.props.client.query({
+      query: GET_USERS,
+    });
+    console.log("componentDidMount", res);
   }
 
   render() {
@@ -83,4 +86,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withApollo(App);;
