@@ -20,7 +20,7 @@ const GET_USERS = gql`
 
 const CREATE_USER = gql`
   mutation createUser {
-    createUser(data: { name: "Alexey", surname: "Altuhov" }) {
+    createUser(data: {name: "Alexey", surname: "Altuhov"}) {
       id
       name
       surname
