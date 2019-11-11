@@ -1,4 +1,4 @@
-endpoint: https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage
+endpoint: https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage
 datamodel: datamodel.prisma
 
 generate:
