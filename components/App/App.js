@@ -18,6 +18,13 @@ const GET_USERS = gql`
       }
     }
   }
+  {
+    users {
+      id
+      name
+      surname
+    }
+  }
 `;
 
 const CREATE_USER = gql`
