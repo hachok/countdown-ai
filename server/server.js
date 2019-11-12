@@ -65,10 +65,6 @@ app.prepare().then(() => {
     })
   );
 
-  graphQLServer.applyMiddleware({
-    app: server
-  });
-
   server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
