@@ -9,7 +9,7 @@ type Shop {
 type Query {
   user(id: ID!): User
   users(where: UserWhereInput): [User]!
-  shops: Shop!
+  shop: Shop!
 }
 
 type Mutation {
