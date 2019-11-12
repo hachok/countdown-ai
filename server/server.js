@@ -41,6 +41,7 @@ app.prepare().then(async () => {
   const server = new Koa();
   const router = new Router();
   let token = '';
+  let shop = '';
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
@@ -61,7 +62,7 @@ app.prepare().then(async () => {
   );
 
   const http = new HttpLink({
-    uri: `/admin/api/2019-07/graphql.json`,
+    uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
     fetch
   });
 
