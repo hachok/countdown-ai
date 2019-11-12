@@ -41,12 +41,11 @@ app.prepare().then(async () => {
   const server = new Koa();
   const router = new Router();
   let token = '';
-  let shop = '';
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
-  await server.use(
-    createShopifyAuth({
+  server.use(
+    await createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
       secret: SHOPIFY_API_SECRET_KEY,
       scopes: [SCOPES],
@@ -55,7 +54,7 @@ app.prepare().then(async () => {
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
         token = accessToken;
-        debug('accessToken', accessToken);
+        console.log('accessToken ----------------- ', accessToken);
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
