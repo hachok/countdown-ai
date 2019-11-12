@@ -54,15 +54,17 @@ app.prepare().then(async () => {
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
         token = accessToken;
-        console.log('accessToken ----------------- ', accessToken);
+        console.log('before accessToken ----------------- ', accessToken);
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
     })
   );
 
+  console.log('after accessToken ----------------- ', token);
+
   const http = new HttpLink({
-    uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
+    uri: `https://countdownt.herokuapp.com/admin/api/2019-07/graphql.json`,
     fetch
   });
 
