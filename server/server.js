@@ -55,6 +55,7 @@ app.prepare().then(async () => {
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
         token = accessToken;
+        debug('accessToken', accessToken);
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
