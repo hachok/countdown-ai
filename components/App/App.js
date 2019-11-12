@@ -15,11 +15,6 @@ const GET_USERS = gql`
       name
       email
     }
-    users {
-      id
-      name
-      surname
-    }
   }
 `;
 
