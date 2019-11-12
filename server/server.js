@@ -38,6 +38,7 @@ const graphQLServer = new ApolloServer({
   playground: {
     endpoint: "/graphql"
   },
+  bodyParser: true,
   context: ({ req }) => ({
     ...req,
     db
@@ -65,20 +66,17 @@ app.prepare().then(() => {
     })
   );
 
-  server.use(graphQLProxy({ version: ApiVersion.July19 }));
-
   graphQLServer.applyMiddleware({
     app: server
   });
+
+  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;
   });
-
-  server.use(router.allowedMethods());
-  server.use(router.routes());
 
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`);
