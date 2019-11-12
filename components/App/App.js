@@ -17,13 +17,6 @@ const GET_USERS = gql`
         host
       }
     }
-    {
-      users {
-        id
-        name
-        surname
-      }
-    }
   }
 `;
 
