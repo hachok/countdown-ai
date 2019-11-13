@@ -57,45 +57,45 @@ app.prepare().then(() => {
         console.log('before accessToken ----------------- ', accessToken);
         console.log('before shop ----------------- ', shop);
 
-        const http = new HttpLink({
-          uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
-          fetch
-        });
-
-        const gqlSchema = makeExecutableSchema({
-          typeDefs,
-          resolvers: {
-            Mutation,
-            Query
-          }
-        });
-
-        const link = setContext((request, previousContext) => ({
-          headers: {
-            "Content-Type": "application/json",
-            "X-Shopify-Access-Token": token
-          }
-        })).concat(http);
-
-        const schema = await introspectSchema(http);
-
-        const shopifySchema = makeRemoteExecutableSchema({ schema, link });
-
-        const mergedSchema = mergeSchemas({
-          schemas: [gqlSchema, shopifySchema]
-        });
-
-        const graphQLServer = new ApolloServer({
-          schema: mergedSchema,
-          context: ({ req }) => ({
-            ...req,
-            db
-          })
-        });
-
-        graphQLServer.applyMiddleware({
-          app: server
-        });
+        // const http = new HttpLink({
+        //   uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
+        //   fetch
+        // });
+        //
+        // const gqlSchema = makeExecutableSchema({
+        //   typeDefs,
+        //   resolvers: {
+        //     Mutation,
+        //     Query
+        //   }
+        // });
+        //
+        // const link = setContext((request, previousContext) => ({
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     "X-Shopify-Access-Token": token
+        //   }
+        // })).concat(http);
+        //
+        // const schema = await introspectSchema(http);
+        //
+        // const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+        //
+        // const mergedSchema = mergeSchemas({
+        //   schemas: [gqlSchema, shopifySchema]
+        // });
+        //
+        // const graphQLServer = new ApolloServer({
+        //   schema: mergedSchema,
+        //   context: ({ req }) => ({
+        //     ...req,
+        //     db
+        //   })
+        // });
+        //
+        // graphQLServer.applyMiddleware({
+        //   app: server
+        // });
 
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
