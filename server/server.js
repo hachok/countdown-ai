@@ -56,53 +56,54 @@ app.prepare().then(async () => {
         _token = accessToken;
         console.log("before accessToken ----------------- ", accessToken);
         console.log("before shop ----------------- ", shop);
+        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
+        ctx.redirect("/");
         await next();
       }
     });
   });
 
-  const http = new HttpLink({
-    uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
-    fetch
+  server.use(async (ctx, next) => {
+    const http = new HttpLink({
+      uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
+      fetch
+    });
+
+    const gqlSchema = makeExecutableSchema({
+      typeDefs,
+      resolvers: {
+        Mutation,
+        Query
+      }
+    });
+
+    const link = setContext((request, previousContext) => ({
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": _token
+      }
+    })).concat(http);
+
+    const schema = await introspectSchema(http);
+
+    const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+
+    const mergedSchema = mergeSchemas({
+      schemas: [gqlSchema, shopifySchema]
+    });
+
+    const graphQLServer = new ApolloServer({
+      schema: mergedSchema,
+      context: ({ req }) => ({
+        ...req,
+        db
+      })
+    });
+
+    graphQLServer.applyMiddleware({
+      app: server
+    });
   });
-
-  const gqlSchema = makeExecutableSchema({
-    typeDefs,
-    resolvers: {
-      Mutation,
-      Query
-    }
-  });
-
-  const link = setContext((request, previousContext) => ({
-    headers: {
-      "Content-Type": "application/json",
-      "X-Shopify-Access-Token": _token
-    }
-  })).concat(http);
-
-  const schema = await introspectSchema(http);
-
-  const shopifySchema = makeRemoteExecutableSchema({ schema, link });
-
-  const mergedSchema = mergeSchemas({
-    schemas: [gqlSchema, shopifySchema]
-  });
-
-  const graphQLServer = new ApolloServer({
-    schema: mergedSchema,
-    context: ({ req }) => ({
-      ...req,
-      db
-    })
-  });
-
-  graphQLServer.applyMiddleware({
-    app: server
-  });
-
-  ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
-  ctx.redirect("/");
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
