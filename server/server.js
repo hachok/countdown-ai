@@ -55,9 +55,10 @@ app.prepare().then(async () => {
         const { shop, accessToken } = ctx.session;
         token = accessToken;
         console.log('before accessToken ----------------- ', accessToken);
+        console.log('before shop ----------------- ', shop);
 
         const http = new HttpLink({
-          uri: `https://countdownt.herokuapp.com/admin/api/2019-07/graphql.json`,
+          uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
           fetch
         });
 
