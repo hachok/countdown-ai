@@ -37,7 +37,7 @@ const db = new Prisma({
   debug: true
 });
 
-app.prepare().then(async () => {
+app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
   let token = '';
@@ -45,7 +45,7 @@ app.prepare().then(async () => {
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
   server.use(
-    await createShopifyAuth({
+    createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
       secret: SHOPIFY_API_SECRET_KEY,
       scopes: [SCOPES],
