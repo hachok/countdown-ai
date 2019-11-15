@@ -77,37 +77,41 @@ app.prepare().then(async () => {
     }
   });
 
-  const http = new HttpLink({
-    uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
-    fetch
-  });
+  try {
+    const http = new HttpLink({
+      uri: `https://demo-sample-store1.myshopify.com/admin/api/2019-07/graphql.json`,
+      fetch
+    });
 
-  const link = setContext(() => ({
-    headers: {
-      "Content-Type": "application/json",
-      "X-Shopify-Access-Token": _settings.token
-    }
-  })).concat(http);
+    const link = setContext(() => ({
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": _settings.token
+      }
+    })).concat(http);
 
-  const schema = await introspectSchema(http);
+    const schema = await introspectSchema(http);
 
-  const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+    const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
-  const mergedSchema = mergeSchemas({
-    schemas: [gqlSchema, shopifySchema]
-  });
+    const mergedSchema = mergeSchemas({
+      schemas: [gqlSchema, shopifySchema]
+    });
 
-  const graphQLServer = new ApolloServer({
-    schema: mergedSchema,
-    context: ({ req }) => ({
-      ...req,
-      db
-    })
-  });
+    const graphQLServer = new ApolloServer({
+      schema: mergedSchema,
+      context: ({ req }) => ({
+        ...req,
+        db
+      })
+    });
 
-  graphQLServer.applyMiddleware({
-    app: server
-  });
+    graphQLServer.applyMiddleware({
+      app: server
+    });
+  } catch (e) {
+    console.log('e', e);
+  }
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
