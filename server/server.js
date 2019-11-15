@@ -79,13 +79,13 @@ app.prepare().then(async () => {
 
   try {
     const http = new HttpLink({
-      uri: `https://countdownt.herokuapp.com/admin/api/2019-07/graphql.json`,
+      uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
       fetch
     });
 
     const link = setContext(() => ({
       headers: {
-        "Content-Type": "application/graphql",
+        "Content-Type": "application/json",
         "X-Shopify-Access-Token": _settings.token
       }
     })).concat(http);
