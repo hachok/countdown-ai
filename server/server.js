@@ -86,7 +86,7 @@ app.prepare().then(async () => {
     const link = setContext(() => ({
       headers: {
         "Content-Type": "application/json",
-        "X-Shopify-Access-Token": '71fa2256b6d775e219ad937512bbd4d9-1573779962'
+        "X-Shopify-Access-Token": ''
       }
     })).concat(http);
 
