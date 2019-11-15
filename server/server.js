@@ -86,7 +86,7 @@ app.prepare().then(async () => {
     const link = setContext(() => ({
       headers: {
         "Content-Type": "application/json",
-        "X-Shopify-Access-Token": _settings.token
+        "X-Shopify-Access-Token": '71fa2256b6d775e219ad937512bbd4d9-1573779962'
       }
     })).concat(http);
 
@@ -99,7 +99,11 @@ app.prepare().then(async () => {
     });
 
     const graphQLServer = new ApolloServer({
-      schema: mergedSchema
+      schema: mergedSchema,
+      context: ({ req }) => ({
+        ...req,
+        db
+      })
     });
 
     graphQLServer.applyMiddleware({
