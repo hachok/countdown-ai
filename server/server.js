@@ -44,7 +44,6 @@ app.prepare().then(async () => {
     token: '',
     shop: ''
   };
-  let _shop = "";
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
@@ -59,11 +58,11 @@ app.prepare().then(async () => {
         const { shop, accessToken } = ctx.session;
         _settings.token = accessToken;
         _settings.shop = shop;
+        console.log("before accessToken ----------------- ", accessToken);
+        console.log("before shop ----------------- ", shop);
         db.mutation.createUser(
           { data: { name: "1", surname: "1" } },
         );
-        console.log("before accessToken ----------------- ", accessToken);
-        console.log("before shop ----------------- ", shop);
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
