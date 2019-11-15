@@ -99,11 +99,7 @@ app.prepare().then(async () => {
     });
 
     const graphQLServer = new ApolloServer({
-      schema: mergedSchema,
-      context: ({ req }) => ({
-        ...req,
-        db
-      })
+      schema: mergedSchema
     });
 
     graphQLServer.applyMiddleware({
