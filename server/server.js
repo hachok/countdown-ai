@@ -67,10 +67,10 @@ app.prepare().then(async () => {
     })
   );
 
-  try {
-    server.use(async ctx => {
-      console.log("ctx ??????????", ctx.session);
-      console.log("accessToken ????????", ctx.session.accessToken);
+  server.use(async ctx => {
+    console.log("ctx ??????????", ctx.session);
+    console.log("accessToken ????????", ctx.session.accessToken);
+    try {
       const gqlSchema = makeExecutableSchema({
         typeDefs,
         resolvers: {
@@ -109,10 +109,10 @@ app.prepare().then(async () => {
       graphQLServer.applyMiddleware({
         app: server
       });
-    });
-  } catch (e) {
-    console.log("e", e);
-  }
+    } catch (e) {
+      console.log("e", e);
+    }
+  });
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
