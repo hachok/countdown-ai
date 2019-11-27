@@ -67,49 +67,58 @@ app.prepare().then(async () => {
     })
   );
 
-  const gqlSchema = makeExecutableSchema({
-    typeDefs,
-    resolvers: {
-      Mutation,
-      Query
-    }
-  });
-
   try {
-    const http = new HttpLink({
-      uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
-      fetch
-    });
+    server.use(async ctx => {
+      console.log("ctx ??????????", ctx.session);
+      console.log("accessToken ????????", ctx.session.accessToken);
+      const gqlSchema = makeExecutableSchema({
+        typeDefs,
+        resolvers: {
+          Mutation,
+          Query
+        }
+      });
 
-    const link = setContext(() => ({
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": ""
-      }
-    })).concat(http);
+      const http = new HttpLink({
+        uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
+        fetch
+      });
 
-    const schema = await introspectSchema(http);
+      const link = setContext(() => ({
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": ""
+        }
+      })).concat(http);
 
-    const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+      const schema = await introspectSchema(http);
 
-    const mergedSchema = mergeSchemas({
-      schemas: [gqlSchema, shopifySchema]
-    });
+      const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
-    const graphQLServer = new ApolloServer({
-      schema: mergedSchema,
-      context: ({ req }) => ({
-        ...req,
-        db
-      })
-    });
+      const mergedSchema = mergeSchemas({
+        schemas: [gqlSchema, shopifySchema]
+      });
 
-    graphQLServer.applyMiddleware({
-      app: server
+      const graphQLServer = new ApolloServer({
+        schema: mergedSchema,
+        context: ({ req }) => ({
+          ...req,
+          db
+        })
+      });
+      graphQLServer.applyMiddleware({
+        app: server
+      });
     });
   } catch (e) {
     console.log("e", e);
   }
+
+  router.get("*", verifyRequest(), async ctx => {
+    await handle(ctx.req, ctx.res);
+    ctx.respond = false;
+    ctx.res.statusCode = 200;
+  });
 
   server.use(router.allowedMethods());
   server.use(router.routes());
