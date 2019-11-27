@@ -47,7 +47,10 @@ app.prepare().then(async () => {
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
-  server.use(
+  console.log("starts here");
+
+  server.use(() => {
+    console.log("before auth");
     createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
       secret: SHOPIFY_API_SECRET_KEY,
@@ -64,8 +67,9 @@ app.prepare().then(async () => {
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
-    })
-  );
+    });
+    console.log("end auth");
+  });
 
   server.use(async ctx => {
     console.log("ctx ??????????", ctx.session);
