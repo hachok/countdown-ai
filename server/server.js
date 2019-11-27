@@ -41,8 +41,8 @@ app.prepare().then(async () => {
   const server = new Koa();
   const router = new Router();
   let _settings = {
-    token: '',
-    shop: ''
+    token: "",
+    shop: ""
   };
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
@@ -60,9 +60,7 @@ app.prepare().then(async () => {
         _settings.shop = shop;
         console.log("before accessToken ----------------- ", accessToken);
         console.log("before shop ----------------- ", shop);
-        db.mutation.createUser(
-          { data: { name: "1", surname: "1" } },
-        );
+        db.mutation.createUser({ data: { name: "1", surname: "1" } });
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
@@ -86,7 +84,7 @@ app.prepare().then(async () => {
     const link = setContext(() => ({
       headers: {
         "Content-Type": "application/json",
-        "X-Shopify-Access-Token": ''
+        "X-Shopify-Access-Token": ""
       }
     })).concat(http);
 
@@ -110,14 +108,8 @@ app.prepare().then(async () => {
       app: server
     });
   } catch (e) {
-    console.log('e', e);
+    console.log("e", e);
   }
-
-  router.get("*", verifyRequest(), async ctx => {
-    await handle(ctx.req, ctx.res);
-    ctx.respond = false;
-    ctx.res.statusCode = 200;
-  });
 
   server.use(router.allowedMethods());
   server.use(router.routes());
