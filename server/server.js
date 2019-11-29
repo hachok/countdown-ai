@@ -7,6 +7,7 @@ import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
+import customProxy from "./custom";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -38,6 +39,7 @@ app.prepare().then(() => {
     })
   );
 
+  server.use(customProxy());
   server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
