@@ -20,33 +20,7 @@ import {
   mergeSchemas
 } from "graphql-tools";
 import { setContext } from "apollo-link-context";
-import * as winston from "winston";
-
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.json(),
-  defaultMeta: { service: "user-service" },
-  transports: [
-    //
-    // - Write to all logs with level `info` and below to `combined.log`
-    // - Write all logs error (and below) to `error.log`.
-    //
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" })
-  ]
-});
-
-//
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple()
-    })
-  );
-}
+const logger = require("pino")();
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -63,6 +37,8 @@ const db = new Prisma({
     "https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage",
   debug: true
 });
+
+var debug = require("debug")("http");
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -87,10 +63,8 @@ app.prepare().then(async () => {
 
   console.log("starts here2");
 
-  logger.log({
-    level: "info",
-    message: "after auth"
-  });
+  logger.info("hello world");
+
   console.log("after auth");
 
   server.use(async function(ctx, next) {
