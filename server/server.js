@@ -71,7 +71,10 @@ app.prepare().then(async () => {
     console.log("end auth");
   });
 
+  console.log("after here");
+
   server.use(() => {
+    console.log("graphqlMiddleware");
     return async function graphqlMiddleware(ctx, next) {
       console.log("ctx ??????????", ctx.session);
       console.log("accessToken ????????", ctx.session.accessToken);
