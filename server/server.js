@@ -92,35 +92,46 @@ app.prepare().then(async () => {
     message: "before auth"
   });
 
-  server.use(() => {
-    console.log("before auth");
-    createShopifyAuth({
-      apiKey: SHOPIFY_API_KEY,
-      secret: SHOPIFY_API_SECRET_KEY,
-      scopes: [SCOPES],
-      async afterAuth(ctx) {
-        //Auth token and shop available in session
-        //Redirect to shop upon auth
-        const { shop, accessToken } = ctx.session;
-        _settings.token = accessToken;
-        _settings.shop = shop;
-        ctx.app.emit("error message !!!", ctx);
+  try {
+    server.use(() => {
+      console.log("before auth");
+      try {
+        createShopifyAuth({
+          apiKey: SHOPIFY_API_KEY,
+          secret: SHOPIFY_API_SECRET_KEY,
+          scopes: [SCOPES],
+          async afterAuth(ctx) {
+            //Auth token and shop available in session
+            //Redirect to shop upon auth
+            const { shop, accessToken } = ctx.session;
+            _settings.token = accessToken;
+            _settings.shop = shop;
+            ctx.app.emit("error message !!!", ctx);
 
-        ctx.logger.log("accessToken ctx", accessToken);
+            ctx.logger.log("accessToken ctx", accessToken);
 
-        logger.log({
-          level: "info",
-          message: "Hello distributed log files!"
+            logger.log({
+              level: "info",
+              message: "Hello distributed log files!"
+            });
+            await console.log(
+              "before accessToken ----------------- ",
+              accessToken
+            );
+            await console.log("before shop ----------------- ", shop);
+            await db.mutation.createUser({ data: { name: "1", surname: "1" } });
+            ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
+            ctx.redirect("/");
+          }
         });
-        await console.log("before accessToken ----------------- ", accessToken);
-        await console.log("before shop ----------------- ", shop);
-        await db.mutation.createUser({ data: { name: "1", surname: "1" } });
-        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
-        ctx.redirect("/");
+      } catch (e) {
+        console.log("eee inside");
       }
+      console.log("end auth");
     });
-    console.log("end auth");
-  });
+  } catch (e) {
+    console.log("eeee", e);
+  }
 
   logger.log({
     level: "info",
