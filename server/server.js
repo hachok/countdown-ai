@@ -48,16 +48,6 @@ app.prepare().then(async () => {
     shop: ""
   };
 
-  server.log = new Proxy(
-    {},
-    {
-      get: (target, name) =>
-        function() {
-          app.emit("log", [name, ctx, ...arguments]);
-        }
-    }
-  );
-
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
   console.log("starts here2");
