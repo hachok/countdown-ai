@@ -52,7 +52,7 @@ app.prepare().then(async () => {
 
   server.use(() => {
     console.log("before auth");
-    createShopifyAuth({
+    return createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
       secret: SHOPIFY_API_SECRET_KEY,
       scopes: [SCOPES],
@@ -69,7 +69,6 @@ app.prepare().then(async () => {
         ctx.redirect("/");
       }
     });
-    console.log("end auth");
   });
   server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
