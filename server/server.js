@@ -93,6 +93,9 @@ app.prepare().then(async () => {
         const { shop, accessToken } = ctx.session;
         _settings.token = accessToken;
         _settings.shop = shop;
+
+        ctx.logger.log("accessToken ctx", accessToken);
+
         logger.log({
           level: "info",
           message: "Hello distributed log files!"
