@@ -76,6 +76,11 @@ app.prepare().then(async () => {
 
   console.log("starts here");
 
+  logger.log({
+    level: "info",
+    message: "before auth"
+  });
+
   server.use(() => {
     console.log("before auth");
     createShopifyAuth({
@@ -100,6 +105,11 @@ app.prepare().then(async () => {
       }
     });
     console.log("end auth");
+  });
+
+  logger.log({
+    level: "info",
+    message: "after auth"
   });
 
   server.use(() => {
