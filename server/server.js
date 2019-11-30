@@ -93,6 +93,10 @@ app.prepare().then(async () => {
   });
   console.log("after auth");
 
+  server.use(async function(ctx, next) {
+    console.log(">> two");
+  });
+
   server.use(() => {
     return async function graphqlMiddleware(ctx, next) {
       console.log("ctx ??????????", ctx.session);
