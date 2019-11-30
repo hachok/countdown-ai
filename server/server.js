@@ -2,6 +2,7 @@ import "@babel/polyfill";
 import dotenv from "dotenv";
 import "isomorphic-fetch";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
+import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
 import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
@@ -108,6 +109,8 @@ app.prepare().then(async () => {
       }
     })
   );
+
+  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
