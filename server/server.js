@@ -44,6 +44,8 @@ app.prepare().then(() => {
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
+  db.mutation.createUser({ data: { name: "3", surname: "3" } });
+
   server.use(
     createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
