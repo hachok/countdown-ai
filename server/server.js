@@ -74,7 +74,7 @@ app.prepare().then(async () => {
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
-  console.log("starts here");
+  console.log("starts here1");
 
   logger.log({
     level: "info",
