@@ -32,7 +32,7 @@ const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SCOPES } = process.env;
 const typeDefs = importSchema("server/schema.graphql");
 const db = new Prisma({
-  typeDefs: "prisma/generated/prisma.graphql",
+  typeDefs: "../prisma/generated/prisma.graphql",
   endpoint:
     "https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage",
   debug: true
