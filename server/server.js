@@ -177,10 +177,6 @@ app.prepare().then(async () => {
     };
   });
 
-  server.logger.on("error", err => {
-    console.log("error happend!!!", err);
-  });
-
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
