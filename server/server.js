@@ -103,7 +103,6 @@ app.prepare().then(async () => {
         } catch (e) {
           console.log("e", e);
         }
-        await next();
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
