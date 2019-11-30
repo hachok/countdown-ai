@@ -53,7 +53,7 @@ app.prepare().then(() => {
         //Auth token and shop available in session
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
-        await db.mutation.createUser({ data: { name: "1", surname: "1" } });
+        await db.mutation.createUser({ data: { name: "2", surname: "2" } });
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
