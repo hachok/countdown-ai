@@ -2,7 +2,6 @@ import "@babel/polyfill";
 import dotenv from "dotenv";
 import "isomorphic-fetch";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
-import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
 import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
@@ -43,10 +42,6 @@ export const GRAPHQL_PATH_PREFIX = "/admin/api";
 app.prepare().then(async () => {
   const server = new Koa();
   const router = new Router();
-  let _settings = {
-    token: "",
-    shop: ""
-  };
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
