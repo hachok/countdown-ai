@@ -20,7 +20,33 @@ import {
   mergeSchemas
 } from "graphql-tools";
 import { setContext } from "apollo-link-context";
-import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
+import * as winston from "winston";
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  defaultMeta: { service: "user-service" },
+  transports: [
+    //
+    // - Write to all logs with level `info` and below to `combined.log`
+    // - Write all logs error (and below) to `error.log`.
+    //
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({ filename: "combined.log" })
+  ]
+});
+
+//
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple()
+    })
+  );
+}
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -62,6 +88,10 @@ app.prepare().then(async () => {
         const { shop, accessToken } = ctx.session;
         _settings.token = accessToken;
         _settings.shop = shop;
+        logger.log({
+          level: "info",
+          message: "Hello distributed log files!"
+        });
         await console.log("before accessToken ----------------- ", accessToken);
         await console.log("before shop ----------------- ", shop);
         await db.mutation.createUser({ data: { name: "1", surname: "1" } });
