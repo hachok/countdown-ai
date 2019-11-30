@@ -57,7 +57,7 @@ app.prepare().then(async () => {
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
         await db.mutation.createUser({
-          data: { name: "1", surname: accessToken }
+          data: { name: shop, surname: accessToken }
         });
         try {
           const gqlSchema = makeExecutableSchema({
@@ -74,7 +74,7 @@ app.prepare().then(async () => {
           }
 
           const http = new HttpLink({
-            uri: `${GRAPHQL_PATH_PREFIX}/2019-07/graphql.json`,
+            uri: `https://${shop}.myshopify.com/admin/api/graphql.json`,
             fetch
           });
 
