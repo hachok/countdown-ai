@@ -85,53 +85,7 @@ app.prepare().then(async () => {
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
-  console.log("starts here1");
-
-  logger.log({
-    level: "info",
-    message: "before auth"
-  });
-
-  try {
-    server.use(() => {
-      console.log("before auth");
-      try {
-        createShopifyAuth({
-          apiKey: SHOPIFY_API_KEY,
-          secret: SHOPIFY_API_SECRET_KEY,
-          scopes: [SCOPES],
-          async afterAuth(ctx) {
-            //Auth token and shop available in session
-            //Redirect to shop upon auth
-            const { shop, accessToken } = ctx.session;
-            _settings.token = accessToken;
-            _settings.shop = shop;
-            ctx.app.emit("error message !!!", ctx);
-
-            ctx.logger.log("accessToken ctx", accessToken);
-
-            logger.log({
-              level: "info",
-              message: "Hello distributed log files!"
-            });
-            await console.log(
-              "before accessToken ----------------- ",
-              accessToken
-            );
-            await console.log("before shop ----------------- ", shop);
-            await db.mutation.createUser({ data: { name: "1", surname: "1" } });
-            ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
-            ctx.redirect("/");
-          }
-        });
-      } catch (e) {
-        console.log("eee inside");
-      }
-      console.log("end auth");
-    });
-  } catch (e) {
-    console.log("eeee", e);
-  }
+  console.log("starts here2");
 
   logger.log({
     level: "info",
