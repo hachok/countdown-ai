@@ -20,6 +20,7 @@ import {
   mergeSchemas
 } from "graphql-tools";
 import { setContext } from "apollo-link-context";
+import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -61,9 +62,9 @@ app.prepare().then(async () => {
         const { shop, accessToken } = ctx.session;
         _settings.token = accessToken;
         _settings.shop = shop;
-        console.log("before accessToken ----------------- ", accessToken);
-        console.log("before shop ----------------- ", shop);
-        db.mutation.createUser({ data: { name: "1", surname: "1" } });
+        await console.log("before accessToken ----------------- ", accessToken);
+        await console.log("before shop ----------------- ", shop);
+        await db.mutation.createUser({ data: { name: "1", surname: "1" } });
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
@@ -71,51 +72,56 @@ app.prepare().then(async () => {
     console.log("end auth");
   });
 
-  server.use(async ctx => {
-    console.log("ctx ??????????", ctx.session);
-    console.log("accessToken ????????", ctx.session.accessToken);
-    try {
-      const gqlSchema = makeExecutableSchema({
-        typeDefs,
-        resolvers: {
-          Mutation,
-          Query
-        }
-      });
+  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
-      const http = new HttpLink({
-        uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
-        fetch
-      });
+  server.use(() => {
+    return async function graphqlMiddleware(ctx, next) {
+      console.log("ctx ??????????", ctx.session);
+      console.log("accessToken ????????", ctx.session.accessToken);
+      try {
+        const gqlSchema = makeExecutableSchema({
+          typeDefs,
+          resolvers: {
+            Mutation,
+            Query
+          }
+        });
 
-      const link = setContext(() => ({
-        headers: {
-          "Content-Type": "application/json",
-          "X-Shopify-Access-Token": ctx.session.accessToken
-        }
-      })).concat(http);
+        const http = new HttpLink({
+          uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
+          fetch
+        });
 
-      const schema = await introspectSchema(http);
+        const link = setContext(() => ({
+          headers: {
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": ctx.session.accessToken
+          }
+        })).concat(http);
 
-      const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+        const schema = await introspectSchema(http);
 
-      const mergedSchema = mergeSchemas({
-        schemas: [gqlSchema, shopifySchema]
-      });
+        const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
-      const graphQLServer = new ApolloServer({
-        schema: mergedSchema,
-        context: ({ req }) => ({
-          ...req,
-          db
-        })
-      });
-      graphQLServer.applyMiddleware({
-        app: server
-      });
-    } catch (e) {
-      console.log("e", e);
-    }
+        const mergedSchema = mergeSchemas({
+          schemas: [gqlSchema, shopifySchema]
+        });
+
+        const graphQLServer = new ApolloServer({
+          schema: mergedSchema,
+          context: ({ req }) => ({
+            ...req,
+            db
+          })
+        });
+        graphQLServer.applyMiddleware({
+          app: server
+        });
+      } catch (e) {
+        console.log("e", e);
+      }
+      await next();
+    };
   });
 
   router.get("*", verifyRequest(), async ctx => {
