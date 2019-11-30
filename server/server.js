@@ -122,8 +122,6 @@ app.prepare().then(async () => {
     };
   });
 
-  server.use(graphQLProxy({ version: ApiVersion.July19 }));
-
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
