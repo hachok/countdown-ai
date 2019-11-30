@@ -37,6 +37,8 @@ const db = new Prisma({
     "https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage",
   debug: true
 });
+export const PROXY_BASE_PATH = "/graphql";
+export const GRAPHQL_PATH_PREFIX = "/admin/api";
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -71,8 +73,13 @@ app.prepare().then(async () => {
             }
           });
 
+          if (ctx.path !== PROXY_BASE_PATH || ctx.method !== "POST") {
+            await next();
+            return;
+          }
+
           const http = new HttpLink({
-            uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
+            uri: `${GRAPHQL_PATH_PREFIX}/2019-07/graphql.json`,
             fetch
           });
 
@@ -109,8 +116,6 @@ app.prepare().then(async () => {
       }
     })
   );
-
-  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
