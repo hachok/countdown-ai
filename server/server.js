@@ -93,6 +93,7 @@ app.prepare().then(async () => {
         const { shop, accessToken } = ctx.session;
         _settings.token = accessToken;
         _settings.shop = shop;
+        ctx.app.emit("error message !!!", ctx);
 
         ctx.logger.log("accessToken ctx", accessToken);
 
