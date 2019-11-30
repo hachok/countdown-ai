@@ -72,8 +72,6 @@ app.prepare().then(async () => {
     console.log("end auth");
   });
 
-  server.use(graphQLProxy({ version: ApiVersion.July19 }));
-
   server.use(() => {
     return async function graphqlMiddleware(ctx, next) {
       console.log("ctx ??????????", ctx.session);
@@ -123,6 +121,8 @@ app.prepare().then(async () => {
       await next();
     };
   });
+
+  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
