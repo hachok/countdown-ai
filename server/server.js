@@ -126,6 +126,7 @@ app.prepare().then(async () => {
     level: "info",
     message: "after auth"
   });
+  console.log("after auth");
 
   server.use(() => {
     return async function graphqlMiddleware(ctx, next) {
