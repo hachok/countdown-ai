@@ -71,6 +71,17 @@ app.prepare().then(async () => {
     token: "",
     shop: ""
   };
+
+  server.log = new Proxy(
+    {},
+    {
+      get: (target, name) =>
+        function() {
+          app.emit("log", [name, ctx, ...arguments]);
+        }
+    }
+  );
+
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
@@ -166,7 +177,7 @@ app.prepare().then(async () => {
     };
   });
 
-  server.on("error", err => {
+  server.logger.on("error", err => {
     console.log("error happend!!!", err);
   });
 
