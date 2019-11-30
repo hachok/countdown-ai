@@ -142,7 +142,7 @@ app.prepare().then(async () => {
       await next();
     };
   });
-
+  console.log("end");
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
