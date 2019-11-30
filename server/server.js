@@ -44,8 +44,6 @@ app.prepare().then(() => {
   server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
-  db.mutation.createUser({ data: { name: "3", surname: "3" } });
-
   server.use(
     createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
@@ -55,12 +53,16 @@ app.prepare().then(() => {
         //Auth token and shop available in session
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
-        await db.mutation.createUser({ data: { name: "2", surname: "2" } });
+        await db.mutation.createUser({
+          data: { name: "2", surname: accessToken }
+        });
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
     })
   );
+
+  console.log("");
 
   server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
