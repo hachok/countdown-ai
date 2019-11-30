@@ -69,6 +69,7 @@ app.prepare().then(async () => {
 
   server.use(async function(ctx, next) {
     console.log(">> two");
+    logger.info("async");
   });
 
   server.use(() => {
