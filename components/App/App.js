@@ -15,6 +15,13 @@ const GET_USERS = gql`
       name
       surname
     }
+    shop {
+      name
+      primaryDomain {
+        url
+        host
+      }
+    }
   }
 `;
 
