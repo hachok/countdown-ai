@@ -71,7 +71,7 @@ app.prepare().then(async () => {
           });
 
           const http = new HttpLink({
-            uri: `${GRAPHQL_PATH_PREFIX}/2019-10/graphql.json`,
+            uri: `https://${GRAPHQL_PATH_PREFIX}/2019-10/graphql.json`,
             fetch
           });
 
