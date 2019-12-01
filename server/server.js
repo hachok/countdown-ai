@@ -60,49 +60,6 @@ app.prepare().then(async () => {
           data: { name: shop, surname: accessToken }
         });
         try {
-          const gqlSchema = makeExecutableSchema({
-            typeDefs,
-            resolvers: {
-              Mutation,
-              Query
-            }
-          });
-
-          if (ctx.path !== PROXY_BASE_PATH || ctx.method !== "POST") {
-            await next();
-            return;
-          }
-
-          const http = new HttpLink({
-            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/graphql.json`,
-            fetch
-          });
-
-          const link = setContext(() => ({
-            headers: {
-              "Content-Type": "application/json",
-              "X-Shopify-Access-Token": accessToken
-            }
-          })).concat(http);
-
-          const schema = await introspectSchema(http);
-
-          const shopifySchema = makeRemoteExecutableSchema({ schema, link });
-
-          const mergedSchema = mergeSchemas({
-            schemas: [gqlSchema, shopifySchema]
-          });
-
-          const graphQLServer = new ApolloServer({
-            schema: gqlSchema,
-            context: ({ req }) => ({
-              ...req,
-              db
-            })
-          });
-          graphQLServer.applyMiddleware({
-            app: server
-          });
         } catch (e) {
           console.log("e", e);
         }
@@ -111,6 +68,29 @@ app.prepare().then(async () => {
       }
     })
   );
+
+  const gqlSchema = makeExecutableSchema({
+    typeDefs,
+    resolvers: {
+      Mutation,
+      Query
+    }
+  });
+
+  const mergedSchema = mergeSchemas({
+    schemas: [gqlSchema]
+  });
+
+  const graphQLServer = new ApolloServer({
+    schema: mergedSchema,
+    context: ({ req }) => ({
+      ...req,
+      db
+    })
+  });
+  graphQLServer.applyMiddleware({
+    app: server
+  });
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
