@@ -74,7 +74,7 @@ app.prepare().then(async () => {
           }
 
           const http = new HttpLink({
-            uri: `https://${shop}.myshopify.com/${GRAPHQL_PATH_PREFIX}/graphql.json`,
+            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/graphql.json`,
             fetch
           });
 
