@@ -56,7 +56,7 @@ app.prepare().then(async () => {
         //Auth token and shop available in session
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
-
+        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         await db.mutation.createUser({
           data: { name: shop, surname: accessToken }
         });
@@ -71,7 +71,7 @@ app.prepare().then(async () => {
           });
 
           const http = new HttpLink({
-            uri: `${GRAPHQL_PATH_PREFIX}/2019-10/graphql.json`,
+            uri: `${GRAPHQL_PATH_PREFIX}/2019-07/graphql.json`,
             fetch
           });
 
@@ -99,8 +99,6 @@ app.prepare().then(async () => {
         } catch (e) {
           console.log("e", e);
         }
-
-        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
     })
