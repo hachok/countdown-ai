@@ -37,7 +37,7 @@ const db = new Prisma({
   debug: true
 });
 export const PROXY_BASE_PATH = "/graphql";
-export const GRAPHQL_PATH_PREFIX = "/admin/api";
+export const GRAPHQL_PATH_PREFIX = "admin/api";
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -74,7 +74,7 @@ app.prepare().then(async () => {
           }
 
           const http = new HttpLink({
-            uri: `https://${shop}.myshopify.com/admin/api/graphql.json`,
+            uri: `https://${shop}.myshopify.com/${GRAPHQL_PATH_PREFIX}/graphql.json`,
             fetch
           });
 
@@ -90,14 +90,13 @@ app.prepare().then(async () => {
           const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
           const mergedSchema = mergeSchemas({
-            schemas: [gqlSchema, shopifySchema]
+            schemas: [shopifySchema]
           });
 
           const graphQLServer = new ApolloServer({
             schema: mergedSchema,
             context: ({ req }) => ({
-              ...req,
-              db
+              ...req
             })
           });
           graphQLServer.applyMiddleware({
