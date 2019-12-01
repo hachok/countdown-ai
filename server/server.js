@@ -19,7 +19,7 @@ import {
   makeExecutableSchema,
   mergeSchemas
 } from "graphql-tools";
-import { setContext } from "apollo-link-context";
+import proxy from "koa-better-http-proxy";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -38,6 +38,7 @@ const db = new Prisma({
 });
 export const PROXY_BASE_PATH = "/graphql";
 export const GRAPHQL_PATH_PREFIX = "/admin/api";
+async function noop() {}
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -70,8 +71,40 @@ app.prepare().then(async () => {
             }
           });
 
+          const http = new HttpLink({
+            uri: `${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
+            fetch
+          });
+
+          const link = await proxy(shop, {
+            https: true,
+            parseReqBody: false,
+            // Setting request header here, not response. That's why we don't use ctx.set()
+            // proxy middleware will grab this request header
+            headers: {
+              "Content-Type": "application/json",
+              "X-Shopify-Access-Token": accessToken
+            },
+            proxyReqPathResolver() {
+              return `${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`;
+            }
+          })(
+            ctx,
+
+            /*
+              We want this middleware to terminate, not fall through to the next in the chain,
+              but sadly it doesn't support not passing a `next` function. To get around this we
+              just pass our own dummy `next` that resolves immediately.
+            */
+            noop
+          );
+
+          const schema = await introspectSchema(http);
+
+          const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+
           const mergedSchema = mergeSchemas({
-            schemas: [gqlSchema]
+            schemas: [gqlSchema, shopifySchema]
           });
 
           const graphQLServer = new ApolloServer({
