@@ -94,7 +94,7 @@ app.prepare().then(async () => {
           });
 
           const graphQLServer = new ApolloServer({
-            schema: shopifySchema,
+            schema: gqlSchema,
             context: ({ req }) => ({
               ...req,
               db

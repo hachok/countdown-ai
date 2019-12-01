@@ -10,12 +10,10 @@ const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
 const GET_USERS = gql`
   query {
-    shop {
+    users {
+      id
       name
-      primaryDomain {
-        url
-        host
-      }
+      surname
     }
   }
 `;
