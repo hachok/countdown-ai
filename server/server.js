@@ -82,7 +82,7 @@ app.prepare().then(async () => {
             }
           })).concat(http);
 
-          const schema = await introspectSchema(http);
+          const schema = await introspectSchema(link);
 
           const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
