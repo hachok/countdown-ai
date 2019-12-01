@@ -81,10 +81,6 @@ app.prepare().then(async () => {
       fetch
     });
 
-    db.query.users({
-      where: { name: shop }
-    });
-
     const link = setContext(() => ({
       headers: {
         "Content-Type": "application/json",
