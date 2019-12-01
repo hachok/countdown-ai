@@ -76,12 +76,36 @@ app.prepare().then(async () => {
       }
     });
 
+    const http = new HttpLink({
+      uri: `${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
+      fetch
+    });
+
+    db.query.users({
+      where: { name: shop }
+    });
+
+    const link = setContext(() => ({
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "1b6f859aa47b9d6383ad2a591e377078"
+      }
+    })).concat(http);
+
+    const schema = await introspectSchema(http);
+
+    const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+
     const mergedSchema = mergeSchemas({
-      schemas: [gqlSchema]
+      schemas: [gqlSchema, shopifySchema]
     });
 
     const graphQLServer = new ApolloServer({
-      schema: mergedSchema
+      schema: mergedSchema,
+      context: ({ req }) => ({
+        ...req,
+        db
+      })
     });
     graphQLServer.applyMiddleware({
       app: server
