@@ -37,7 +37,7 @@ const db = new Prisma({
   debug: true
 });
 export const PROXY_BASE_PATH = "/graphql";
-export const GRAPHQL_PATH_PREFIX = "admin/api";
+export const GRAPHQL_PATH_PREFIX = "/admin/api";
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -56,41 +56,39 @@ app.prepare().then(async () => {
         //Auth token and shop available in session
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
+
         await db.mutation.createUser({
           data: { name: shop, surname: accessToken }
         });
-        try {
-        } catch (e) {
-          console.log("e", e);
-        }
+
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
     })
   );
 
-  const gqlSchema = makeExecutableSchema({
-    typeDefs,
-    resolvers: {
-      Mutation,
-      Query
-    }
-  });
+  try {
+    const gqlSchema = makeExecutableSchema({
+      typeDefs,
+      resolvers: {
+        Mutation,
+        Query
+      }
+    });
 
-  const mergedSchema = mergeSchemas({
-    schemas: [gqlSchema]
-  });
+    const mergedSchema = mergeSchemas({
+      schemas: [gqlSchema]
+    });
 
-  const graphQLServer = new ApolloServer({
-    schema: mergedSchema,
-    context: ({ req }) => ({
-      ...req,
-      db
-    })
-  });
-  graphQLServer.applyMiddleware({
-    app: server
-  });
+    const graphQLServer = new ApolloServer({
+      schema: mergedSchema
+    });
+    graphQLServer.applyMiddleware({
+      app: server
+    });
+  } catch (e) {
+    console.log("e", e);
+  }
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
