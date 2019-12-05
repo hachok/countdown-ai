@@ -85,11 +85,11 @@ app.prepare().then(async () => {
           const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
           const mergedSchema = mergeSchemas({
-            schemas: [gqlSchema, shopifySchema]
+            schemas: [shopifySchema]
           });
 
           const graphQLServer = new ApolloServer({
-            schema: shopifySchema
+            schema: mergedSchema
           });
           graphQLServer.applyMiddleware({
             app: server
