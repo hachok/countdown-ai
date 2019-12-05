@@ -17,9 +17,11 @@ import {
   introspectSchema,
   makeRemoteExecutableSchema,
   makeExecutableSchema,
-  mergeSchemas
+  mergeSchemas,
+  FilterTypes
 } from "graphql-tools";
 import { setContext } from "apollo-link-context";
+import transformSchema from "graphql-tools/dist/transforms/transformSchema";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -71,7 +73,7 @@ app.prepare().then(async () => {
           });
 
           const http = new HttpLink({
-            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/graphql.json`,
+            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/07-2019/graphql.json`,
             fetch,
             headers: {
               "Content-Type": "application/json",
@@ -85,6 +87,12 @@ app.prepare().then(async () => {
             schema: remoteSchema,
             link: http
           });
+
+          transformSchema(shopifySchema, [
+            new FilterTypes(filter => {
+              return filter.toString() !== "Job";
+            })
+          ]);
 
           const mergedSchema = mergeSchemas({
             schemas: [shopifySchema]
