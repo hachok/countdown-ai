@@ -75,29 +75,14 @@ app.prepare().then(async () => {
             fetch
           });
 
-          const link = setContext(() => ({
+          const link = setContext((request, previousContext) => ({
             headers: {
               "Content-Type": "application/json",
               "X-Shopify-Access-Token": accessToken
             }
           })).concat(http);
 
-          const httpLink = createHttpLink({
-            uri: `https://${shop}${GRAPHQL_PATH_PREFIX}/2019-10/graphql.json`
-          });
-
-          const middlewareLink = setContext(() => ({
-            headers: {
-              "X-Shopify-Access-Token": accessToken
-            }
-          }));
-
-          const schema = await introspectSchema(http);
-
-          const shopifySchema = makeRemoteExecutableSchema({
-            schema,
-            link: middlewareLink.concat(httpLink)
-          });
+          const shopifySchema = makeRemoteExecutableSchema({ schema, link });
 
           const mergedSchema = mergeSchemas({
             schemas: [gqlSchema, shopifySchema]
