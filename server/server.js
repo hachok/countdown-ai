@@ -11,7 +11,7 @@ import { Mutation } from "./gql/Mutation";
 import { Query } from "./gql/Query";
 import { Prisma } from "prisma-binding";
 import { importSchema } from "graphql-import";
-import { HttpLink } from "apollo-link-http";
+import { createHttpLink, HttpLink } from "apollo-link-http";
 import fetch from "node-fetch";
 import {
   introspectSchema,
@@ -82,9 +82,22 @@ app.prepare().then(async () => {
             }
           })).concat(http);
 
-          const schema = await introspectSchema(link);
+          const httpLink = createHttpLink({
+            uri: `https://${shop}${GRAPHQL_PATH_PREFIX}/2019-10/graphql.json`
+          });
 
-          const shopifySchema = makeRemoteExecutableSchema({ schema, link });
+          const middlewareLink = setContext(() => ({
+            headers: {
+              "X-Shopify-Access-Token": accessToken
+            }
+          }));
+
+          const schema = await introspectSchema(http);
+
+          const shopifySchema = makeRemoteExecutableSchema({
+            schema,
+            link: middlewareLink.concat(httpLink)
+          });
 
           const mergedSchema = mergeSchemas({
             schemas: [gqlSchema, shopifySchema]
