@@ -37,7 +37,7 @@ const db = new Prisma({
   debug: true
 });
 export const PROXY_BASE_PATH = "/graphql";
-export const GRAPHQL_PATH_PREFIX = "/admin/api";
+export const GRAPHQL_PATH_PREFIX = "admin/api";
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -71,7 +71,7 @@ app.prepare().then(async () => {
           });
 
           const http = new HttpLink({
-            uri: `https://${shop}${GRAPHQL_PATH_PREFIX}/admin/api/graphql.json`,
+            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/graphql.json`,
             fetch
           });
 
