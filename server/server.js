@@ -91,41 +91,6 @@ app.prepare().then(async () => {
             */
             noop
           );
-
-          const gqlSchema = makeExecutableSchema({
-            typeDefs,
-            resolvers: {
-              Mutation,
-              Query
-            }
-          });
-
-          const http = new HttpLink({
-            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
-            fetch,
-            headers: {
-              "Content-Type": "application/json",
-              "X-Shopify-Access-Token": accessToken
-            }
-          });
-
-          const remoteSchema = await introspectSchema(http);
-
-          const shopifySchema = makeRemoteExecutableSchema({
-            schema: remoteSchema,
-            link: http
-          });
-
-          const mergedSchema = mergeSchemas({
-            schemas: [gqlSchema, shopifySchema]
-          });
-
-          const graphQLServer = new ApolloServer({
-            schema: mergedSchema
-          });
-          graphQLServer.applyMiddleware({
-            app: server
-          });
         } catch (e) {
           console.log("e", e);
         }
