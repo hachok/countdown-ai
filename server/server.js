@@ -38,10 +38,12 @@ app.prepare().then(() => {
     })
   );
 
-  server.use(graphQLProxy({ version: ApiVersion.July19 }));
+  server.use(graphQLProxy({ version: ApiVersion.July19 }, server));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
+    ctx.res.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Strict");
+
     ctx.respond = false;
     ctx.res.statusCode = 200;
   });

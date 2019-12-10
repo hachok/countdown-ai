@@ -1,9 +1,29 @@
-import proxy from "koa-better-http-proxy";
+import { ApolloServer } from "apollo-server-koa";
+import { Mutation } from "./gql/Mutation";
+import { Query } from "./gql/Query";
+import { Prisma } from "prisma-binding";
+import { importSchema } from "graphql-import";
+import { HttpLink } from "apollo-link-http";
+import fetch from "node-fetch";
+import {
+  introspectSchema,
+  makeRemoteExecutableSchema,
+  makeExecutableSchema,
+  mergeSchemas
+} from "graphql-tools";
+
+const typeDefs = importSchema("server/schema.graphql");
+const db = new Prisma({
+  typeDefs: "prisma/generated/prisma.graphql",
+  endpoint:
+    "https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage",
+  debug: true
+});
 
 export const PROXY_BASE_PATH = "/graphql";
 export const GRAPHQL_PATH_PREFIX = "/admin/api";
 
-export default function shopifyGraphQLProxy(proxyOptions) {
+export default function shopifyGraphQLProxy(proxyOptions, server) {
   return async function shopifyGraphQLProxyMiddleware(ctx, next) {
     const { session = {} } = ctx;
 
@@ -22,29 +42,39 @@ export default function shopifyGraphQLProxy(proxyOptions) {
       return;
     }
 
-    await proxy(shop, {
-      https: true,
-      parseReqBody: false,
-      // Setting request header here, not response. That's why we don't use ctx.set()
-      // proxy middleware will grab this request header
+    const gqlSchema = makeExecutableSchema({
+      typeDefs,
+      resolvers: {
+        Mutation,
+        Query
+      }
+    });
+
+    const http = new HttpLink({
+      uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
+      fetch,
       headers: {
         "Content-Type": "application/json",
         "X-Shopify-Access-Token": accessToken
-      },
-      proxyReqPathResolver() {
-        return `${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`;
       }
-    })(
-      ctx,
+    });
 
-      /*
-        We want this middleware to terminate, not fall through to the next in the chain,
-        but sadly it doesn't support not passing a `next` function. To get around this we
-        just pass our own dummy `next` that resolves immediately.
-      */
-      noop
-    );
+    const remoteSchema = await introspectSchema(http);
+
+    const shopifySchema = makeRemoteExecutableSchema({
+      schema: remoteSchema,
+      link: http
+    });
+
+    const mergedSchema = mergeSchemas({
+      schemas: [gqlSchema, shopifySchema]
+    });
+
+    const graphQLServer = new ApolloServer({
+      schema: mergedSchema
+    });
+    graphQLServer.applyMiddleware({
+      app: server
+    });
   };
 }
-
-async function noop() {}
