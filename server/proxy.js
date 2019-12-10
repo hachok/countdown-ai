@@ -1,7 +1,5 @@
-import { ApolloServer } from "apollo-server-koa";
 import { Mutation } from "./gql/Mutation";
 import { Query } from "./gql/Query";
-import { Prisma } from "prisma-binding";
 import { importSchema } from "graphql-import";
 import { HttpLink } from "apollo-link-http";
 import fetch from "node-fetch";
@@ -14,12 +12,6 @@ import {
 import { setContext } from "apollo-link-context";
 
 const typeDefs = importSchema("server/schema.graphql");
-const db = new Prisma({
-  typeDefs: "prisma/generated/prisma.graphql",
-  endpoint:
-    "https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage",
-  debug: true
-});
 
 export const PROXY_BASE_PATH = "/graphql";
 export const GRAPHQL_PATH_PREFIX = "/admin/api";
@@ -76,15 +68,8 @@ export default function shopifyGraphQLProxy(proxyOptions, server) {
       link: link
     });
 
-    const mergedSchema = mergeSchemas({
+    return mergeSchemas({
       schemas: [gqlSchema, shopifySchema]
-    });
-
-    const graphQLServer = new ApolloServer({
-      schema: mergedSchema
-    });
-    graphQLServer.applyMiddleware({
-      app: server
     });
   };
 }
