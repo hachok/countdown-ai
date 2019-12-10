@@ -22,6 +22,7 @@ import {
 } from "graphql-tools";
 import { setContext } from "apollo-link-context";
 import transformSchema from "graphql-tools/dist/transforms/transformSchema";
+import proxy from "koa-better-http-proxy";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -40,6 +41,9 @@ const db = new Prisma({
 });
 export const PROXY_BASE_PATH = "/graphql";
 export const GRAPHQL_PATH_PREFIX = "admin/api";
+export const version = "2019-07";
+
+async function noop() {}
 
 app.prepare().then(async () => {
   const server = new Koa();
@@ -59,11 +63,35 @@ app.prepare().then(async () => {
         //Redirect to shop upon auth
         const { shop, accessToken } = ctx.session;
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
-        await db.mutation.createUser({
-          data: { name: shop, surname: accessToken }
-        });
-
         try {
+          if (ctx.path !== PROXY_BASE_PATH || ctx.method !== "POST") {
+            await next();
+            return;
+          }
+
+          await proxy(shop, {
+            https: true,
+            parseReqBody: false,
+            // Setting request header here, not response. That's why we don't use ctx.set()
+            // proxy middleware will grab this request header
+            headers: {
+              "Content-Type": "application/json",
+              "X-Shopify-Access-Token": accessToken
+            },
+            proxyReqPathResolver() {
+              return `${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`;
+            }
+          })(
+            ctx,
+
+            /*
+              We want this middleware to terminate, not fall through to the next in the chain,
+              but sadly it doesn't support not passing a `next` function. To get around this we
+              just pass our own dummy `next` that resolves immediately.
+            */
+            noop
+          );
+
           const gqlSchema = makeExecutableSchema({
             typeDefs,
             resolvers: {
@@ -88,14 +116,8 @@ app.prepare().then(async () => {
             link: http
           });
 
-          transformSchema(shopifySchema, [
-            new FilterTypes(filter => {
-              return filter.toString() !== "Job";
-            })
-          ]);
-
           const mergedSchema = mergeSchemas({
-            schemas: [shopifySchema]
+            schemas: [gqlSchema, shopifySchema]
           });
 
           const graphQLServer = new ApolloServer({
