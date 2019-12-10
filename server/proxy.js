@@ -11,6 +11,7 @@ import {
   makeExecutableSchema,
   mergeSchemas
 } from "graphql-tools";
+import { setContext } from "apollo-link-context";
 
 const typeDefs = importSchema("server/schema.graphql");
 const db = new Prisma({
@@ -50,20 +51,29 @@ export default function shopifyGraphQLProxy(proxyOptions, server) {
       }
     });
 
+    console.log("shop", shop);
+    console.log(
+      "uri",
+      `https://${shop}/${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`
+    );
+
     const http = new HttpLink({
       uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
-      fetch,
+      fetch
+    });
+
+    const link = setContext((request, previousContext) => ({
       headers: {
         "Content-Type": "application/json",
         "X-Shopify-Access-Token": accessToken
       }
-    });
+    })).concat(http);
 
-    const remoteSchema = await introspectSchema(http);
+    const remoteSchema = await introspectSchema(link);
 
     const shopifySchema = makeRemoteExecutableSchema({
       schema: remoteSchema,
-      link: http
+      link: link
     });
 
     const mergedSchema = mergeSchemas({
