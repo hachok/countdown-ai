@@ -101,7 +101,7 @@ app.prepare().then(async () => {
           });
 
           const http = new HttpLink({
-            uri: `https://demo-sample-store1.myshopify.com/admin/api/graphql.json`,
+            uri: `https://${shop}/${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
             fetch,
             headers: {
               "Content-Type": "application/json",
