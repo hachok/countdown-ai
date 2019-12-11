@@ -6,6 +6,7 @@ import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
 import { Query, withApollo } from "react-apollo";
 import ApolloClient from "apollo-boost";
+import fetch from "node-fetch";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -30,7 +31,8 @@ const CREATE_USER = gql`
 `;
 
 const clientCountdown = new ApolloClient({
-  uri: "/countdown"
+  uri: "/countdown",
+  fetch
 });
 
 class App extends Component {
