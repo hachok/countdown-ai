@@ -2,24 +2,18 @@ import "@babel/polyfill";
 import dotenv from "dotenv";
 import "isomorphic-fetch";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
-import { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
-import graphQLProxy from "./proxy";
+import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
 import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
-import { ApolloServer } from "apollo-server-koa";
+import { ApolloServer, gql } from "apollo-server-koa";
+import { Mutation } from "./gql/Mutation";
+import { Query } from "./gql/Query";
 import { Prisma } from "prisma-binding";
+import { importSchema } from "graphql-import";
 
 dotenv.config();
-
-const db = new Prisma({
-  typeDefs: "prisma/generated/prisma.graphql",
-  endpoint:
-    "https://eu1.prisma.sh/dmytro-hachok-b9054e/countdown-service/countdown-stage",
-  debug: true
-});
-
 const port = parseInt(process.env.PORT, 10) || 8081;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({
@@ -27,6 +21,31 @@ const app = next({
 });
 const handle = app.getRequestHandler();
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, SCOPES } = process.env;
+const typeDefs = importSchema("/gql/schema.graphql");
+
+const db = new Prisma({
+  typeDefs: "./generated/prisma.graphql",
+  endpoint:
+    "https://countdown-43264fa942.herokuapp.com/countdown-service/countdown-stage"
+});
+
+const graphQLServer = new ApolloServer({
+  typeDefs,
+  resolvers: {
+    Mutation,
+    Query
+  },
+  // Make graphql playgroud available at /graphql
+  playground: {
+    endpoint: "/countdown/graphql"
+  },
+  bodyParser: true,
+  context: ({ req }) => ({
+    ...req,
+    db
+  })
+});
+
 app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
@@ -41,30 +60,22 @@ app.prepare().then(() => {
       async afterAuth(ctx) {
         //Auth token and shop available in session
         //Redirect to shop upon auth
-        const { shop, accessToken } = ctx.session;
+        const { shop } = ctx.session;
         ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
         ctx.redirect("/");
       }
     })
   );
 
-  const mergedSchema = server.use(graphQLProxy({ version: ApiVersion.July19 }));
-
-  const graphQLServer = new ApolloServer({
-    schema: mergedSchema
-  });
   graphQLServer.applyMiddleware({
     app: server,
-    context: ({ req }) => ({
-      ...req,
-      db
-    })
+    path: "/countdown"
   });
+
+  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
-    ctx.res.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=Strict");
-
     ctx.respond = false;
     ctx.res.statusCode = 200;
   });
