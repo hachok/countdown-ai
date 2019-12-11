@@ -20,6 +20,16 @@ const GET_USERS = gql`
   }
 `;
 
+const GET_SHOP_INFORMATION = gql`
+  query {
+    shop {
+      id
+      name
+      email
+    }
+  }
+`;
+
 const CREATE_USER = gql`
   mutation createUser {
     createUser(data: { name: "Alexey", surname: "Altuhov" }) {
@@ -59,6 +69,16 @@ class App extends Component {
         <Query query={GET_USERS} client={clientCountdown}>
           {({ data }) => {
             console.log("data", data);
+            return (
+              <Card>
+                <p>stuff here</p>
+              </Card>
+            );
+          }}
+        </Query>
+        <Query query={GET_SHOP_INFORMATION}>
+          {({ data }) => {
+            console.log("shop data", data);
             return (
               <Card>
                 <p>stuff here</p>
