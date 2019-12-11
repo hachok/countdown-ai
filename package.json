@@ -43,6 +43,7 @@
     "@shopify/polaris": "^3.16.0",
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.4.3",
+    "apollo-link": "^1.2.13",
     "apollo-link-context": "^1.0.19",
     "apollo-link-http": "^1.5.16",
     "apollo-server": "^2.9.7",
@@ -56,6 +57,7 @@
     "graphql-tag": "latest",
     "graphql-tools": "^4.0.6",
     "isomorphic-fetch": "^2.1.1",
+    "isomorphic-unfetch": "^3.0.0",
     "js-cookie": "^2.2.0",
     "koa": "^2.7.0",
     "koa-better-http-proxy": "^0.2.4",
@@ -71,6 +73,7 @@
     "prisma-binding": "^2.3.16",
     "react": "^16.8.6",
     "react-apollo": "^2.5.6",
+    "react-apollo-hooks": "^0.5.0",
     "react-dom": "^16.8.6",
     "styled-components": "^4.3.2",
     "winston": "^3.2.1"

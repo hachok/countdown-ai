@@ -1,4 +1,3 @@
-import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 import App, { Container } from "next/app";
 import { AppProvider } from "@shopify/polaris";
@@ -6,14 +5,9 @@ import { Provider } from "@shopify/app-bridge-react";
 import Cookies from "js-cookie";
 import "@shopify/polaris/styles.css";
 
-const client = new ApolloClient({
-  fetchOptions: {
-    credentials: "include"
-  }
-});
 class MyApp extends App {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, apolloClient } = this.props;
     const shopOrigin = Cookies.get("shopOrigin");
     return (
       <Container>
@@ -25,7 +19,7 @@ class MyApp extends App {
               forceRedirect: true
             }}
           >
-            <ApolloProvider client={client}>
+            <ApolloProvider client={apolloClient}>
               <Component {...pageProps} />
             </ApolloProvider>
           </Provider>
@@ -35,4 +29,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp;
+export default withApolloClient(MyApp);
