@@ -5,8 +5,8 @@ import { EmptyState, Layout } from "@shopify/polaris";
 import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
-import { useQuery } from "react-apollo-hooks";
 import { clientCountdown } from "../../pages/_app";
+import { useQuery } from "@apollo/react-hooks";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -50,9 +50,7 @@ const App = () => {
 
   useEffect(() => {
     const res = useQuery(SHOPIFY_GET_SHOP);
-    const res2 = useQuery(GET_USERS, {
-      client: clientCountdown
-    });
+    const res2 = useQuery(GET_USERS, { client: clientCountdown });
 
     console.log("componentDidMount res, res2", res, res2);
   });
