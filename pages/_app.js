@@ -1,4 +1,4 @@
-import { ApolloClient } from "apollo-boost";
+import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 import App, { Container } from "next/app";
 import { AppProvider } from "@shopify/polaris";
