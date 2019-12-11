@@ -45,7 +45,6 @@
     "apollo-boost": "^0.4.3",
     "apollo-link": "^1.2.13",
     "apollo-link-context": "^1.0.19",
-    "apollo-link-http": "^1.5.16",
     "apollo-server": "^2.9.7",
     "apollo-server-koa": "^2.9.7",
     "babel-plugin-import-graphql": "^2.7.0",
