@@ -6,6 +6,7 @@ import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { useQuery } from "@apollo/react-hooks";
+import { withClient } from "@titelmedia/react-apollo-multiple-clients";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -105,4 +106,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default withClient("local")(App);
