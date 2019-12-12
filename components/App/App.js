@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Heading, CalloutCard, Card } from "@shopify/polaris";
 import { Container } from "./App.styled";
 import { EmptyState, Layout } from "@shopify/polaris";
 import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
-import { Query } from "react-apollo";
-import { useQuery } from "@apollo/react-hooks";
+import { ApolloProvider, Query } from "react-apollo";
+import ApolloClient from "apollo-boost";
+import fetch from "node-fetch";
+import { Enter } from "./Enter";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
+
+export const local = new ApolloClient({
+  uri: "/countdown",
+  fetch
+});
 
 const GET_USERS = gql`
   query {
@@ -41,21 +48,14 @@ const SHOPIFY_GET_SHOP = gql`
 
 const App = () => {
   const [open, setOpen] = useState(false);
-  const resShopify = useQuery(GET_USERS);
 
   const handleSelection = resources => {
     setOpen(false);
-    console.log("resources", resources);
   };
-
-  useEffect(() => {
-    console.log("componentDidMount resShopify", resShopify);
-    console.log("componentDidMount resShopify data", resShopify.data);
-  }, []);
 
   return (
     <Heading>
-      <Query query={GET_USERS}>
+      <Query query={SHOPIFY_GET_SHOP}>
         {({ data }) => {
           console.log("data", data);
           return (
@@ -81,6 +81,9 @@ const App = () => {
             content: "Select products"
           }}
         />
+        <ApolloProvider client={local}>
+          <Enter />
+        </ApolloProvider>
         <ResourcePicker
           resourceType="Product"
           showVariants={false}

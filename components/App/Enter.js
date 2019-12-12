@@ -1,5 +1,7 @@
-import { useQuery } from "@apollo/react-hooks";
+import React, { Component } from "react";
 import gql from "graphql-tag";
+import { Card } from "@shopify/polaris";
+import { Query } from "react-apollo";
 
 const GET_USERS = gql`
   query {
@@ -11,9 +13,23 @@ const GET_USERS = gql`
   }
 `;
 
-export const Enter = () => {
-  const users = useQuery(GET_USERS);
-  console.log("users", users);
-  console.log("users data", users.data);
-  return <div>test</div>;
-};
+export default class Enter extends Component {
+  render() {
+    const dataRender = this.props.query(GET_USERS);
+    console.log("entter ren data", dataRender);
+    return (
+      <div>
+        <Query query={GET_USERS}>
+          {({ data }) => {
+            console.log("enter data", data);
+            return (
+              <Card>
+                <p>stuff here</p>
+              </Card>
+            );
+          }}
+        </Query>
+      </div>
+    );
+  }
+}

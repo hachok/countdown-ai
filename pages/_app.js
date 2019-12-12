@@ -4,13 +4,12 @@ import { AppProvider } from "@shopify/polaris";
 import { Provider } from "@shopify/app-bridge-react";
 import Cookies from "js-cookie";
 import "@shopify/polaris/styles.css";
-import { ApolloProvider } from "@apollo/react-hooks";
-import fetch from "node-fetch";
-import withApolloClient from "../lib/with-apollo-client";
+import { ApolloProvider } from "react-apollo";
 
-export const local = new ApolloClient({
-  uri: "/countdown",
-  fetch
+const shopify = new ApolloClient({
+  fetchOptions: {
+    credentials: "include"
+  }
 });
 
 class MyApp extends App {
@@ -27,7 +26,7 @@ class MyApp extends App {
               forceRedirect: true
             }}
           >
-            <ApolloProvider client={client}>
+            <ApolloProvider client={shopify}>
               <Component {...pageProps} />
             </ApolloProvider>
           </Provider>
