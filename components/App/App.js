@@ -58,7 +58,7 @@ const App = () => {
     const res = useQuery(SHOPIFY_GET_SHOP);
 
     console.log("componentDidMount res, res2", res);
-  }, [data]);
+  }, []);
 
   return (
     <Heading>
