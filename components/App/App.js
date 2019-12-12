@@ -72,16 +72,6 @@ const App = () => {
           );
         }}
       </Query>
-      <Query query={SHOPIFY_GET_SHOP}>
-        {({ data }) => {
-          console.log("shop data", data);
-          return (
-            <Card>
-              <p>stuff here</p>
-            </Card>
-          );
-        }}
-      </Query>
       <Container>
         <CalloutCard
           title="Customize the style of your checkout"
