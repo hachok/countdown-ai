@@ -6,29 +6,17 @@ import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { useQuery } from "@apollo/react-hooks";
-import { withClient } from "@titelmedia/react-apollo-multiple-clients";
+import fetch from "node-fetch";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { Enter } from "./Enter";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
-const GET_USERS = gql`
-  query {
-    users {
-      id
-      name
-      surname
-    }
-  }
-`;
-
-const CREATE_USER = gql`
-  mutation createUser {
-    createUser(data: { name: "Alexey", surname: "Altuhov" }) {
-      id
-      name
-      surname
-    }
-  }
-`;
+export const local = new ApolloClient({
+  uri: "/countdown",
+  fetch
+});
 
 const SHOPIFY_GET_SHOP = gql`
   query {
@@ -42,7 +30,7 @@ const SHOPIFY_GET_SHOP = gql`
 
 const App = () => {
   const [open, setOpen] = useState(false);
-  const resShopify = useQuery(GET_USERS);
+  const resShopify = useQuery(SHOPIFY_GET_SHOP);
 
   const handleSelection = resources => {
     setOpen(false);
@@ -56,7 +44,7 @@ const App = () => {
 
   return (
     <Heading>
-      <Query query={GET_USERS}>
+      <Query query={SHOPIFY_GET_SHOP}>
         {({ data }) => {
           console.log("data", data);
           return (
@@ -89,6 +77,9 @@ const App = () => {
           onSelection={resources => handleSelection(resources)}
           onCancel={() => setOpen(false)}
         />
+        <ApolloProvider client={local}>
+          <Enter />
+        </ApolloProvider>
         <Layout>
           <EmptyState
             heading="Select products to start"
@@ -106,4 +97,4 @@ const App = () => {
   );
 };
 
-export default withClient("local")(App);
+export default App;
