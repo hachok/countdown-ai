@@ -2,17 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Heading, CalloutCard, Card } from "@shopify/polaris";
 import { Container } from "./App.styled";
 import { EmptyState, Layout } from "@shopify/polaris";
-import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { useQuery } from "@apollo/react-hooks";
 import fetch from "node-fetch";
 import ApolloClient from "apollo-boost";
-
-export const clientCountdown = new ApolloClient({
-  uri: "/countdown",
-  fetch
-});
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -48,23 +42,20 @@ const SHOPIFY_GET_SHOP = gql`
 
 const App = () => {
   const [open, setOpen] = useState(false);
-  const resShopify = useQuery(SHOPIFY_GET_SHOP);
 
   const handleSelection = resources => {
     setOpen(false);
-    console.log("resources", resources);
   };
 
   useEffect(() => {
-    console.log("componentDidMount resShopify", resShopify);
-    console.log("componentDidMount resShopify data", resShopify.data);
+    console.log("componentDidMount resShopify");
   }, []);
 
   return (
     <Heading>
-      <Query query={GET_USERS} client={clientCountdown}>
+      <Query query={GET_USERS}>
         {({ data }) => {
-          console.log("data", data);
+          console.log("query data", data);
           return (
             <Card>
               <p>stuff here</p>
@@ -83,18 +74,6 @@ const App = () => {
         >
           <p>Upload your store’s logo, change colors and fonts, and more.</p>
         </CalloutCard>
-        <TitleBar
-          primaryAction={{
-            content: "Select products"
-          }}
-        />
-        <ResourcePicker
-          resourceType="Product"
-          showVariants={false}
-          open={open}
-          onSelection={resources => handleSelection(resources)}
-          onCancel={() => setOpen(false)}
-        />
         <Layout>
           <EmptyState
             heading="Select products to start"

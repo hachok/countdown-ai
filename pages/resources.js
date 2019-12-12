@@ -1,6 +1,6 @@
 import { Card, Layout, Page } from "@shopify/polaris";
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
 
 const GET_PRODUCTS_BY_ID = gql`
   query getProducts($ids: [ID!]!) {
@@ -36,16 +36,16 @@ const Resources = () => (
     <Layout>
       <Card>
         <Query query={GET_PRODUCTS_BY_ID}>
-        {({ data, loading, error }) => {
-          if (loading) return <div>Loading…</div>;
-          if (error) return <div>{error.message}</div>;
-          console.log(data);
-          return (
-            <Card>
-              <p>stuff here</p>
-            </Card>
-          );
-        }}
+          {({ data, loading, error }) => {
+            if (loading) return <div>Loading…</div>;
+            if (error) return <div>{error.message}</div>;
+
+            return (
+              <Card>
+                <p>stuff here</p>
+              </Card>
+            );
+          }}
         </Query>
       </Card>
     </Layout>
