@@ -55,9 +55,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    const res2 = useQuery(GET_USERS, { client: clientCountdown });
-
-    console.log("componentDidMount res, res2", res2);
+    console.log("componentDidMount res, res2");
   });
 
   return (
