@@ -54,12 +54,6 @@ const App = () => {
     console.log("resources", resources);
   };
 
-  useEffect(() => {
-    const res = useQuery(SHOPIFY_GET_SHOP);
-
-    console.log("componentDidMount res, res2", res);
-  });
-
   return (
     <Heading>
       <Query query={GET_USERS} client={clientCountdown}>
