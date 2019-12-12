@@ -55,7 +55,7 @@ const App = () => {
 
   return (
     <Heading>
-      <Query query={SHOPIFY_GET_SHOP}>
+      <Query query={GET_USERS}>
         {({ data }) => {
           console.log("data", data);
           return (
