@@ -55,9 +55,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    const { data } = useQuery(SHOPIFY_GET_SHOP);
+    const res = useQuery(SHOPIFY_GET_SHOP);
 
-    console.log("componentDidMount res, res2", data);
+    console.log("componentDidMount res, res2", res);
   }, [data]);
 
   return (
