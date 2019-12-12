@@ -48,6 +48,8 @@ const SHOPIFY_GET_SHOP = gql`
 
 const App = () => {
   const [open, setOpen] = useState(false);
+  const resShopify = useQuery(SHOPIFY_GET_SHOP);
+  const resLocal = useQuery(GET_USERS, { client: clientCountdown });
 
   const handleSelection = resources => {
     setOpen(false);
@@ -55,9 +57,10 @@ const App = () => {
   };
 
   useEffect(() => {
-    const res = useQuery(SHOPIFY_GET_SHOP);
-
-    console.log("componentDidMount res, res2", res);
+    console.log("componentDidMount resShopify", resShopify);
+    console.log("componentDidMount resShopify data", resShopify.data);
+    console.log("componentDidMount resLocal", resLocal);
+    console.log("componentDidMount resLocal data ", resLocal.data);
   }, []);
 
   return (
