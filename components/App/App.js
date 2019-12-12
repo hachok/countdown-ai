@@ -9,7 +9,7 @@ import { useQuery } from "@apollo/react-hooks";
 import fetch from "node-fetch";
 import ApolloClient from "apollo-boost";
 
-const clientCountdown = new ApolloClient({
+export const clientCountdown = new ApolloClient({
   uri: "/countdown",
   fetch
 });
@@ -56,9 +56,8 @@ const App = () => {
 
   useEffect(() => {
     const res = useQuery(SHOPIFY_GET_SHOP);
-    const res2 = useQuery(GET_USERS, { client: clientCountdown });
 
-    console.log("componentDidMount res, res2", res, res2);
+    console.log("componentDidMount res, res2", res);
   });
 
   return (
