@@ -1,16 +1,26 @@
 import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "react-apollo";
 import App, { Container } from "next/app";
 import { AppProvider } from "@shopify/polaris";
 import { Provider } from "@shopify/app-bridge-react";
 import Cookies from "js-cookie";
 import "@shopify/polaris/styles.css";
+import { ApolloMultipleClientsProvider } from "@titelmedia/react-apollo-multiple-clients";
+import fetch from "node-fetch";
 
-const client = new ApolloClient({
-  fetchOptions: {
-    credentials: "include"
-  }
+// const shopify = new ApolloClient({
+//   fetchOptions: {
+//     credentials: "include"
+//   }
+// });
+
+const local = new ApolloClient({
+  uri: "/countdown",
+  fetch
 });
+
+const clients = {
+  firstNamespace: local
+};
 
 class MyApp extends App {
   render() {
@@ -26,9 +36,9 @@ class MyApp extends App {
               forceRedirect: true
             }}
           >
-            <ApolloProvider client={client}>
+            <ApolloMultipleClientsProvider clients={clients}>
               <Component {...pageProps} />
-            </ApolloProvider>
+            </ApolloMultipleClientsProvider>
           </Provider>
         </AppProvider>
       </Container>

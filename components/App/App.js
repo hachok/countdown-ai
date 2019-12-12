@@ -6,13 +6,6 @@ import { ResourcePicker, TitleBar } from "@shopify/app-bridge-react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { useQuery } from "@apollo/react-hooks";
-import fetch from "node-fetch";
-import ApolloClient from "apollo-boost";
-
-export const clientCountdown = new ApolloClient({
-  uri: "/countdown",
-  fetch
-});
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 
@@ -48,7 +41,7 @@ const SHOPIFY_GET_SHOP = gql`
 
 const App = () => {
   const [open, setOpen] = useState(false);
-  const resShopify = useQuery(SHOPIFY_GET_SHOP);
+  const resShopify = useQuery(GET_USERS);
 
   const handleSelection = resources => {
     setOpen(false);
@@ -62,7 +55,7 @@ const App = () => {
 
   return (
     <Heading>
-      <Query query={GET_USERS} client={clientCountdown}>
+      <Query query={GET_USERS}>
         {({ data }) => {
           console.log("data", data);
           return (
