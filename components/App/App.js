@@ -7,7 +7,7 @@ import gql from "graphql-tag";
 import { ApolloProvider, Query } from "react-apollo";
 import ApolloClient from "apollo-boost";
 import fetch from "node-fetch";
-import { Enter } from "./Enter";
+import Enter from "./Enter";
 
 const img = "https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg";
 

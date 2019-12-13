@@ -15,8 +15,6 @@ const GET_USERS = gql`
 
 export default class Enter extends Component {
   render() {
-    const dataRender = this.props.query(GET_USERS);
-    console.log("entter ren data", dataRender);
     return (
       <div>
         <Query query={GET_USERS}>
