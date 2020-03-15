@@ -40,7 +40,7 @@ const localSchema = makeExecutableSchema({
 });
 
 const schema = mergeSchemas({
-  schemas: [localSchema, shopifySchema]
+  schemas: [localSchema]
 });
 
 const graphQLServer = new ApolloServer({
