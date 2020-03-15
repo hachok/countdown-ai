@@ -6,7 +6,7 @@ const shopifySchema = async ({ query, variables, operationName, ctx }) => {
   const { accessToken } = ctx.session;
 
   const getSchema = await fetch(
-    `https://${GRAPHQL_PATH_PREFIX}/${version}/graphql.json`,
+    `https://${GRAPHQL_PATH_PREFIX}/2019-04/graphql.json`,
     {
       method: "GET",
       headers: {
