@@ -2,7 +2,6 @@ import "@babel/polyfill";
 import dotenv from "dotenv";
 import "isomorphic-fetch";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
-import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
 import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
@@ -12,6 +11,8 @@ import { Mutation } from "./gql/Mutation";
 import { Query } from "./gql/Query";
 import { Prisma } from "prisma-binding";
 import { importSchema } from "graphql-import";
+import { makeExecutableSchema, mergeSchemas } from "graphql-tools";
+import shopifySchema from "./shopifySchema";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -30,16 +31,24 @@ const db = new Prisma({
   debug: true
 });
 
-const graphQLServer = new ApolloServer({
+const localSchema = makeExecutableSchema({
   typeDefs,
   resolvers: {
     Mutation,
     Query
-  },
+  }
+});
+
+const schema = mergeSchemas({
+  schemas: [localSchema, shopifySchema]
+});
+
+const graphQLServer = new ApolloServer({
   // Make graphql playgroud available at /graphql
   playground: {
     endpoint: "/countdown/graphql"
   },
+  schema,
   bodyParser: true,
   context: ({ req }) => ({
     ...req,
@@ -72,8 +81,6 @@ app.prepare().then(() => {
     app: server,
     path: "/countdown"
   });
-
-  server.use(graphQLProxy({ version: ApiVersion.July19 }));
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
