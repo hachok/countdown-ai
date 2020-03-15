@@ -6,8 +6,9 @@ const typeDefs = importSchema("server/schema.graphql");
 
 const shopifySchema = async ({ query, variables, operationName, ctx }) => {
   console.log("ctx", ctx);
-  const { accessToken } = ctx.session;
   try {
+    const { accessToken } = ctx.session;
+
     const getSchema = await fetch(
       `https://${GRAPHQL_PATH_PREFIX}/2019-04/graphql.json`,
       {
