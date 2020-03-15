@@ -3,6 +3,7 @@ import { introspectSchema, makeRemoteExecutableSchema } from "graphql-tools";
 import { GRAPHQL_PATH_PREFIX } from "./proxy";
 
 const shopifySchema = async ({ query, variables, operationName, ctx }) => {
+  console.log("ctx", ctx);
   const { accessToken } = ctx.session;
 
   const getSchema = await fetch(
