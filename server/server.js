@@ -31,31 +31,6 @@ const db = new Prisma({
   debug: true
 });
 
-const localSchema = makeExecutableSchema({
-  typeDefs,
-  resolvers: {
-    Mutation,
-    Query
-  }
-});
-
-const schema = mergeSchemas({
-  schemas: [localSchema]
-});
-
-const graphQLServer = new ApolloServer({
-  // Make graphql playgroud available at /graphql
-  playground: {
-    endpoint: "/countdown/graphql"
-  },
-  schema,
-  bodyParser: true,
-  context: ({ req }) => ({
-    ...req,
-    db
-  })
-});
-
 app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
@@ -76,6 +51,31 @@ app.prepare().then(() => {
       }
     })
   );
+
+  const localSchema = makeExecutableSchema({
+    typeDefs,
+    resolvers: {
+      Mutation,
+      Query
+    }
+  });
+
+  const schema = mergeSchemas({
+    schemas: [localSchema, shopifySchema]
+  });
+
+  const graphQLServer = new ApolloServer({
+    // Make graphql playgroud available at /graphql
+    playground: {
+      endpoint: "/countdown/graphql"
+    },
+    schema,
+    bodyParser: true,
+    context: ({ req }) => ({
+      ...req,
+      db
+    })
+  });
 
   graphQLServer.applyMiddleware({
     app: server,
