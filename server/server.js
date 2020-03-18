@@ -62,9 +62,6 @@ async function run() {
       })
     )
 
-    // everything after this point will require authentication
-    .use(verifyRequest())
-
     // application code
     .use(async ctx => {
       const { shop, accessToken } = ctx.session;
