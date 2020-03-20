@@ -1,7 +1,7 @@
 import "@babel/polyfill";
 import dotenv from "dotenv";
 import "isomorphic-fetch";
-import shopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
+import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
 import Koa from "koa";
 import next from "next";
 import Router from "koa-router";
@@ -17,6 +17,7 @@ import {
   makeRemoteExecutableSchema,
   mergeSchemas
 } from "graphql-tools";
+import { createApolloFetch } from "apollo-fetch";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -38,49 +39,38 @@ const db = new Prisma({
 async function run() {
   const server = new Koa();
   const router = new Router();
+  server.use(session(server));
   server.keys = [SHOPIFY_API_SECRET_KEY];
 
-  server.context.db = db;
+  server.use(
+    createShopifyAuth({
+      apiKey: SHOPIFY_API_KEY,
+      secret: SHOPIFY_API_SECRET_KEY,
+      scopes: [SCOPES],
+      async afterAuth(ctx) {
+        //Auth token and shop available in session
+        //Redirect to shop upon auth
+        const { shop } = ctx.session;
+        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
+        ctx.redirect("/");
+      }
+    })
+  );
 
-  server
-    // sets up secure session data on each request
-    .use(session({ secure: true, sameSite: "none" }, server))
+  const graphQLServer = new ApolloServer({
+    // Make graphql playgroud available at /graphql
+    playground: {
+      endpoint: "/countdown/graphql"
+    },
+    schema: await makeMergedSchema(),
+    bodyParser: true,
+    context: ({ req }) => ({
+      ...req,
+      db
+    })
+  });
 
-    // sets up shopify auth
-    .use(
-      shopifyAuth({
-        apiKey: SHOPIFY_API_KEY,
-        secret: SHOPIFY_API_SECRET_KEY,
-        scopes: ["write_orders, write_products"],
-        afterAuth(ctx) {
-          const { shop, accessToken } = ctx.session;
-
-          console.log("We did it!", accessToken);
-
-          ctx.redirect("/");
-        }
-      })
-    )
-
-    // application code
-    .use(async ctx => {
-      const { shop, accessToken } = ctx.session;
-
-      const graphQLServer = new ApolloServer({
-        // Make graphql playgroud available at /graphql
-        playground: {
-          endpoint: "/countdown/graphql"
-        },
-        schema: await makeMergedSchema(accessToken),
-        bodyParser: true,
-        context: ({ req }) => ({
-          ...req,
-          db
-        })
-      });
-
-      graphQLServer.applyMiddleware({ app: server });
-    });
+  graphQLServer.applyMiddleware({ app: server, path: "/countdown" });
 
   router.get("*", verifyRequest(), async ctx => {
     await handle(ctx.req, ctx.res);
@@ -96,7 +86,25 @@ async function run() {
   });
 }
 
-async function makeMergedSchema(accessToken) {
+async function makeMergedSchema() {
+  const fetcher = createApolloFetch({
+    uri: `/admin/api/2019-04/graphql.json`
+  });
+
+  fetcher.use(({ request, options }, next) => {
+    options.headers = {
+      "Content-Type": "application/json",
+      "X-Shopify-Access-Token": request.context.session.accessToken
+    };
+
+    next();
+  });
+
+  const shopifySchema = makeRemoteExecutableSchema({
+    schema: await introspectSchema(fetcher),
+    fetcher
+  });
+
   const localSchema = makeExecutableSchema({
     typeDefs,
     resolvers: {
@@ -105,10 +113,8 @@ async function makeMergedSchema(accessToken) {
     }
   });
 
-  console.log("accessToken", accessToken);
-
   return mergeSchemas({
-    schemas: [localSchema]
+    schemas: [localSchema, shopifySchema]
   });
 }
 
