@@ -92,9 +92,10 @@ async function makeMergedSchema() {
   });
 
   fetcher.use(({ request, options }, next) => {
+    console.log("request.query.session.accessToken", request.query);
     options.headers = {
       "Content-Type": "application/json",
-      "X-Shopify-Access-Token": request.context.session.accessToken
+      "X-Shopify-Access-Token": ""
     };
 
     next();
